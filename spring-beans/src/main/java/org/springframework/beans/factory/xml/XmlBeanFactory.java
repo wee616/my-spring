@@ -76,6 +76,7 @@ public class XmlBeanFactory extends DefaultListableBeanFactory {
 	 */
 	public XmlBeanFactory(Resource resource, BeanFactory parentBeanFactory) throws BeansException {
 		super(parentBeanFactory);
+		//wuyc 将加载动作交由XmlBeanDefinitionReader 的loadBeanDefinitions方法处理
 		this.reader.loadBeanDefinitions(resource);
 	}
 

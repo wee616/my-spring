@@ -300,6 +300,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @throws BeanDefinitionStoreException in case of loading or parsing errors
 	 */
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
+		//wuyc EncodedResource进行封装
 		return loadBeanDefinitions(new EncodedResource(resource));
 	}
 
@@ -326,12 +327,16 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 					"Detected cyclic loading of " + encodedResource + " - check your import definitions!");
 		}
 		try {
+			//wuyc encodedResource->inputStream
 			InputStream inputStream = encodedResource.getResource().getInputStream();
 			try {
+				//wuyc inputStream->inputSource
+				//wuyc org.xml.sax.InputSource.InputSource 并不是由spring提供，通过SAX读取xml文件，准备inputSource
 				InputSource inputSource = new InputSource(inputStream);
 				if (encodedResource.getEncoding() != null) {
 					inputSource.setEncoding(encodedResource.getEncoding());
 				}
+				//wuyc 进入逻辑核心部分
 				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
 			}
 			finally {
@@ -385,9 +390,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		try {
+			//wuyc 获取对XML文件的验证模式
 			int validationMode = getValidationModeForResource(resource);
+			//wuyc 加载XML文件，得到对应的Document
 			Document doc = this.documentLoader.loadDocument(
 					inputSource, getEntityResolver(), this.errorHandler, validationMode, isNamespaceAware());
+			//wuyc 根据Document注册bean信息
 			return registerBeanDefinitions(doc, resource);
 		}
 		catch (BeanDefinitionStoreException ex) {
