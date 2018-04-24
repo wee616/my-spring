@@ -391,8 +391,15 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			throws BeanDefinitionStoreException {
 		try {
 			//wuyc 获取对XML文件的验证模式
+			//wuyc 验证模式有两种：DTD XSD，都可以校验xml文档的正确性
+			//wuyc DTD: xml头部加声明：
+			//<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+			//wuyc CSD: xml头部加声明：
+			//xsi:schemaLocation="http://www.springframework.org/schema/beans
+	        //http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
 			int validationMode = getValidationModeForResource(resource);
 			//wuyc 加载XML文件，得到对应的Document
+			//wuyc 注意getEntityResolver()的作用：默认的DTD声明是通过网络寻找，这里可以指定DTD的定义
 			Document doc = this.documentLoader.loadDocument(
 					inputSource, getEntityResolver(), this.errorHandler, validationMode, isNamespaceAware());
 			//wuyc 根据Document注册bean信息
@@ -433,9 +440,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	protected int getValidationModeForResource(Resource resource) {
 		int validationModeToUse = getValidationMode();
+		//wuyc 如果手动指定了验证模式，则使用指定的验证模式
 		if (validationModeToUse != VALIDATION_AUTO) {
 			return validationModeToUse;
 		}
+		//wuyc 自动检测验证模式
 		int detectedMode = detectValidationMode(resource);
 		if (detectedMode != VALIDATION_AUTO) {
 			return detectedMode;
@@ -474,6 +483,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		}
 
 		try {
+			//wuyc 具体验证工作交由XmlValidationModeDetector 处理
 			return this.validationModeDetector.detectValidationMode(inputStream);
 		}
 		catch (IOException ex) {
@@ -497,10 +507,15 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	@SuppressWarnings("deprecation")
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+		//wuyc 实例化BeanDefinitionDocumentReader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+		//wuyc 设置环境变量
 		documentReader.setEnvironment(getEnvironment());
+		//wuyc 记录统计前BeanDefinition的加载个数
 		int countBefore = getRegistry().getBeanDefinitionCount();
+		//wuyc 加载及注册bean
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+		//wuyc 记录本次加载的BeanDefinition的个数
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
 

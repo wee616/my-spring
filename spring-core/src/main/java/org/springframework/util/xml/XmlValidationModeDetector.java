@@ -97,6 +97,7 @@ public class XmlValidationModeDetector {
 				if (this.inComment || !StringUtils.hasText(content)) {
 					continue;
 				}
+				//wuyc 判断有DOCTYPE 则是DTD，否则XSD
 				if (hasDoctype(content)) {
 					isDtdValidated = true;
 					break;
