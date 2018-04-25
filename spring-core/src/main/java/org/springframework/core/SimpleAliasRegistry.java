@@ -44,10 +44,12 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	public void registerAlias(String name, String alias) {
 		Assert.hasText(name, "'name' must not be empty");
 		Assert.hasText(alias, "'alias' must not be empty");
+		//wuyc 如果alias与beanName相同的话，不记录alias，并清除对应的alias
 		if (alias.equals(name)) {
 			this.aliasMap.remove(alias);
 		}
 		else {
+			//wuyc 如果alias不允许被覆盖则抛出异常
 			if (!allowAliasOverriding()) {
 				String registeredName = this.aliasMap.get(alias);
 				if (registeredName != null && !registeredName.equals(name)) {
@@ -55,7 +57,9 @@ public class SimpleAliasRegistry implements AliasRegistry {
 							name + "': It is already registered for name '" + registeredName + "'.");
 				}
 			}
+			//wuyc alias循环检查，当A->B存在时，若再出现A->C->B则会抛出异常
 			checkForAliasCircle(name, alias);
+			//wuyc 注册alias
 			this.aliasMap.put(alias, name);
 		}
 	}

@@ -394,7 +394,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			//wuyc 验证模式有两种：DTD XSD，都可以校验xml文档的正确性
 			//wuyc DTD: xml头部加声明：
 			//<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-			//wuyc CSD: xml头部加声明：
+			//wuyc XSD: xml头部加声明：
 			//xsi:schemaLocation="http://www.springframework.org/schema/beans
 	        //http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
 			int validationMode = getValidationModeForResource(resource);
