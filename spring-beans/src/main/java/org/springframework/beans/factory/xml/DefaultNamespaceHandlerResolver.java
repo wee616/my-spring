@@ -110,24 +110,31 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	 * @return the located {@link NamespaceHandler}, or {@code null} if none found
 	 */
 	public NamespaceHandler resolve(String namespaceUri) {
+		//wuyc 获取已经配置的Handler映射
 		Map<String, Object> handlerMappings = getHandlerMappings();
 		Object handlerOrClassName = handlerMappings.get(namespaceUri);
 		if (handlerOrClassName == null) {
 			return null;
 		}
 		else if (handlerOrClassName instanceof NamespaceHandler) {
+			//wuyc 已经做过解析的，直接读取
 			return (NamespaceHandler) handlerOrClassName;
 		}
 		else {
+			//wuyc 未做过解析的，返回的是类路径
 			String className = (String) handlerOrClassName;
 			try {
+				//wuyc 利用反射将类路径转化为类
 				Class<?> handlerClass = ClassUtils.forName(className, this.classLoader);
 				if (!NamespaceHandler.class.isAssignableFrom(handlerClass)) {
 					throw new FatalBeanException("Class [" + className + "] for namespace [" + namespaceUri +
 							"] does not implement the [" + NamespaceHandler.class.getName() + "] interface");
 				}
+				//wuyc 初始化类
 				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
+				//wuyc 调用init方法
 				namespaceHandler.init();
+				//wuyc 记录缓存
 				handlerMappings.put(namespaceUri, namespaceHandler);
 				return namespaceHandler;
 			}
