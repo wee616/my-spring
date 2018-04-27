@@ -297,9 +297,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				//针对不同的scope进行bean的创建
 				// Create bean instance.
 				if (mbd.isSingleton()) {
+					//wuyc 单例模式的bean加载
 					sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
 						public Object getObject() throws BeansException {
 							try {
+								//wuyc 创建bean
 								return createBean(beanName, mbd, args);
 							}
 							catch (BeansException ex) {
@@ -1451,10 +1453,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param mbd the merged bean definition
 	 * @return the object to expose for the bean
 	 */
+	/**
+	 *	wuyc 
+	 *	1.对FactoryBean正确性进行验证
+	 *	2.对非FactoryBean不做任何处理
+	 *	3.对bean进行转换
+	 *	4.将从Factory中解析bean的工作委托给getObjectFromFactoryBean
+	 */
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, RootBeanDefinition mbd) {
 
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
+		//wuyc 如果自定的name是以&为前缀，且beanInstance不是FactoryBean类型则校验不通过
 		if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
 			throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());
 		}
@@ -1468,10 +1478,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 		Object object = null;
 		if (mbd == null) {
+			//wuyc 尝试从缓存中加载bean
 			object = getCachedObjectForFactoryBean(beanName);
 		}
 		if (object == null) {
 			// Return bean instance from factory.
+			//wuyc beanInstance到这里一定是FactoryBean的
 			FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
 			// Caches object obtained from FactoryBean if it is a singleton.
 			if (mbd == null && containsBeanDefinition(beanName)) {

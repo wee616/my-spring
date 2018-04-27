@@ -176,9 +176,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		//wuyc 检查缓存中是否存在实例
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			//wuyc 如果为空则锁定全局变量并处理
 			synchronized (this.singletonObjects) {
+				//wuyc 如果此bean正在加载则不处理
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
@@ -205,6 +208,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		Assert.notNull(beanName, "'beanName' must not be null");
 		synchronized (this.singletonObjects) {
 			Object singletonObject = this.singletonObjects.get(beanName);
+			//wuyc 单例模式已加载的直接返回
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
 					throw new BeanCreationNotAllowedException(beanName,
@@ -220,6 +224,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<Exception>();
 				}
 				try {
+					//wuyc 初始化bean
 					singletonObject = singletonFactory.getObject();
 				}
 				catch (BeanCreationException ex) {
@@ -236,6 +241,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					}
 					afterSingletonCreation(beanName);
 				}
+				//wuyc 加入缓存
 				addSingleton(beanName, singletonObject);
 			}
 			return (singletonObject != NULL_OBJECT ? singletonObject : null);
@@ -322,6 +328,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @see #isSingletonCurrentlyInCreation
 	 */
 	protected void beforeSingletonCreation(String beanName) {
+		//wuyc 记录加载状态，便于后面做循环依赖的检测
 		if (!this.inCreationCheckExclusions.containsKey(beanName) &&
 				this.singletonsCurrentlyInCreation.put(beanName, Boolean.TRUE) != null) {
 			throw new BeanCurrentlyInCreationException(beanName);
