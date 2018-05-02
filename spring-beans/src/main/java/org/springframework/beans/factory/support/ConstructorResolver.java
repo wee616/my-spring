@@ -99,6 +99,7 @@ class ConstructorResolver {
 	 * or {@code null} if none (-> use constructor argument values from bean definition)
 	 * @return a BeanWrapper for the new instance
 	 */
+	//wuyc 带参数的初始化，存在很多的不确定性，因此加了很多参数判断
 	public BeanWrapper autowireConstructor(
 			final String beanName, final RootBeanDefinition mbd, Constructor<?>[] chosenCtors, final Object[] explicitArgs) {
 
