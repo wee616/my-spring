@@ -16,3 +16,6 @@
 
 20180427
 解析bean加载的细节，至准备创建bean，createBean
+
+20180502
+解析bean创建过程，至属性注入，populateBean
