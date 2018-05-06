@@ -25,3 +25,6 @@
 
 20180504
 提交parent
+
+20180506
+增加了spring-context、spring-aop的pom依赖
