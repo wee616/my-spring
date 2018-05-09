@@ -23,5 +23,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-beans"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-context"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-aop"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
