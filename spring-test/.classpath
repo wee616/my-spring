@@ -22,5 +22,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-beans"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-context"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

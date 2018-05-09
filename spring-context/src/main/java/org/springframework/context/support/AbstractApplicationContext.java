@@ -448,40 +448,53 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			//wuyc 准备刷新的上下文环境，例如对系统属性或者环境变量进行准备及验证。
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			//wuyc 初始化beanFactory，并进行xml文件的读取
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			//wuyc 对beanFactory做功能补充，@Autowired就是在这里添加了支持
 			prepareBeanFactory(beanFactory);
 
+			//wuyc beanFactory的后处理
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				//wuyc 子类覆盖方法做额外的处理
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				//wuyc 激活各种beanFactory处理器
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				//wuyc 注册拦截Bean创建的Bean处理器，这里只是注册，真正的调用是在getBean时候
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				//wuyc 为上下文初始化Message源，国际化处理
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				//wuyc 初始化应用消息广播器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				//wuyc 留给子类初始化其他bean
 				onRefresh();
 
 				// Check for listener beans and register them.
+				//wuyc 在所有注册的bean中查找Listener bean，注册到消息广播器中
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				//wuyc 初始化非延迟加载单例
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				//wuyc 完成刷新过程，通知生命周期处理器lifecycleProcessor刷新过程，同时发出ContextRefreshEvent通知别人
 				finishRefresh();
 			}
 
@@ -519,10 +532,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment
+		//wuyc 空方法，留给子类实现
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		//wuyc 对所需参数进行验证
 		getEnvironment().validateRequiredProperties();
 	}
 
@@ -542,7 +557,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		//wuyc 初始化BeanFactory，并进行xml的读取，并将得到的BeanFactory记录在当前的实体属性中
 		refreshBeanFactory();
+		//wuyc 返回当前实体的beanFactory属性
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Bean factory for " + getDisplayName() + ": " + beanFactory);

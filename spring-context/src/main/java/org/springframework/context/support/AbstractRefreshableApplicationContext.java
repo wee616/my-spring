@@ -124,10 +124,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			closeBeanFactory();
 		}
 		try {
+			//wuyc 创建DefaultListableBeanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
+			//wuyc 为序列化指定id,如果需要的话，将这个BeanFactory从id反序列化到BeanFactory对象
 			beanFactory.setSerializationId(getId());
+			//wuyc 定制BeanFactory，设置相关属性，包括是否允许覆盖同名称的不同定义对象以及循环依赖
+			//wuyc 设置@Autowired和@Qualifier注释解析器，QualifierAnnotationAutowireCandidateResolver
 			customizeBeanFactory(beanFactory);
+			//wuyc 初始化DocumentReader，并进行xml文件的读取与解析，这里和使用beanFactory解析xml的入口一致
 			loadBeanDefinitions(beanFactory);
+			//wuyc 使用全局变量记录beanFactory实例
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
 			}
@@ -209,12 +215,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
 	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+		//wuyc 是否允许覆盖同名称的不同定义的对象
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}
+		//wuyc 是否允许bean之间存在循环依赖
 		if (this.allowCircularReferences != null) {
 			beanFactory.setAllowCircularReferences(this.allowCircularReferences);
 		}
+		//wuyc 用于@Qualifier和@Autowired
 		beanFactory.setAutowireCandidateResolver(new QualifierAnnotationAutowireCandidateResolver());
 	}
 
