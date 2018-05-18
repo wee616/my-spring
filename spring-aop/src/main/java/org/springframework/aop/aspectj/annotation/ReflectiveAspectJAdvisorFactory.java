@@ -91,8 +91,11 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 
 	public List<Advisor> getAdvisors(MetadataAwareAspectInstanceFactory maaif) {
+		//wuyc 获取标记为AspectJ的类
 		final Class<?> aspectClass = maaif.getAspectMetadata().getAspectClass();
+		//wuyc 获取标记为AspectJ的name
 		final String aspectName = maaif.getAspectMetadata().getAspectName();
+		//wuyc 验证
 		validate(aspectClass);
 
 		// We need to wrap the MetadataAwareAspectInstanceFactory with a decorator
@@ -169,11 +172,13 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 		validate(aif.getAspectMetadata().getAspectClass());
 
+		//wuyc 切点信息的获取
 		AspectJExpressionPointcut ajexp =
 				getPointcut(candidateAdviceMethod, aif.getAspectMetadata().getAspectClass());
 		if (ajexp == null) {
 			return null;
 		}
+		//wuyc 根据切点信息生成增强器
 		return new InstantiationModelAwarePointcutAdvisorImpl(
 				this, ajexp, aif, candidateAdviceMethod, declarationOrderInAspect, aspectName);
 	}

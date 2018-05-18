@@ -319,8 +319,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	 */
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean != null) {
+			//wuyc 根据给定的bean的class和name构建出个key,格式：beanClassName_beanName
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			if (!this.earlyProxyReferences.containsKey(cacheKey)) {
+				//wuyc 如果它适合被代理，则需要封装指定bean
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -358,9 +360,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 		}
 
 		// Create proxy if we have advice.
+		//wuyc 如果存在增强方法则创建代理
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			//wuyc 创建代理
 			Object proxy = createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
@@ -449,9 +453,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	 */
 	protected Object createProxy(
 			Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
-
+		//wuyc 委托ProxyFactory进行代理类的创建与处理
 		ProxyFactory proxyFactory = new ProxyFactory();
 		// Copy our properties (proxyTargetClass etc) inherited from ProxyConfig.
+		//wuyc 获取当前类中的属性
 		proxyFactory.copyFrom(this);
 
 		if (!shouldProxyTargetClass(beanClass, beanName)) {
@@ -459,23 +464,26 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 			// the target's interfaces only.
 			Class<?>[] targetInterfaces = ClassUtils.getAllInterfacesForClass(beanClass, this.proxyClassLoader);
 			for (Class<?> targetInterface : targetInterfaces) {
+				//wuyc 添加代理接口
 				proxyFactory.addInterface(targetInterface);
 			}
 		}
 
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		for (Advisor advisor : advisors) {
+			//wuyc 加入增强器
 			proxyFactory.addAdvisor(advisor);
 		}
-
+		//wuyc 设置要代理的类
 		proxyFactory.setTargetSource(targetSource);
+		//wuyc 定制代理
 		customizeProxyFactory(proxyFactory);
 
 		proxyFactory.setFrozen(this.freezeProxy);
 		if (advisorsPreFiltered()) {
 			proxyFactory.setPreFiltered(true);
 		}
-
+		//wuyc 取代理
 		return proxyFactory.getProxy(this.proxyClassLoader);
 	}
 

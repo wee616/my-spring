@@ -37,8 +37,11 @@ import org.springframework.beans.factory.xml.ParserContext;
  */
 class AspectJAutoProxyBeanDefinitionParser implements BeanDefinitionParser {
 
+	//wuyc aop标签解析器入口
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
+		//wuyc 注册AspectJAutoProxyBeanDefinitionParser
 		AopNamespaceUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(parserContext, element);
+		//wuyc 对于注解中子类的处理
 		extendBeanDefinition(element, parserContext);
 		return null;
 	}

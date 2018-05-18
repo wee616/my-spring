@@ -106,6 +106,7 @@ public class ProxyFactory extends ProxyCreatorSupport {
 	 * @return the proxy object
 	 */
 	public Object getProxy(ClassLoader classLoader) {
+		//wuyc 创建代理
 		return createAopProxy().getProxy(classLoader);
 	}
 

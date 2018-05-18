@@ -79,6 +79,13 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
+	/**
+	 * 1、获取所有的beanName
+	 * 2、遍历所有的beanName，找出声明为AspectJ注解的类，进行进一步的处理
+	 * 3、将标记为AspectJ注解的类进行增强器的提取
+	 * 4、将提取结果放入缓存
+	 * @return
+	 */
 	public List<Advisor> buildAspectJAdvisors() {
 		List<String> aspectNames = null;
 
@@ -87,8 +94,10 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 			if (aspectNames == null) {
 				List<Advisor> advisors = new LinkedList<Advisor>();
 				aspectNames = new LinkedList<String>();
+				//wuyc 获取所有的beanName
 				String[] beanNames =
 						BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.beanFactory, Object.class, true, false);
+				//wuyc 遍历所有的beanName，找出声明为AspectJ注解的类
 				for (String beanName : beanNames) {
 					if (!isEligibleBean(beanName)) {
 						continue;
@@ -106,6 +115,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 							MetadataAwareAspectInstanceFactory factory =
 									new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+							//wuyc 将标记为AspectJ注解的类进行增强器的提取
 							List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 							if (this.beanFactory.isSingleton(beanName)) {
 								this.advisorsCache.put(beanName, classAdvisors);

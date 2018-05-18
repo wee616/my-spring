@@ -72,10 +72,18 @@ public abstract class AopNamespaceUtils {
 
 	public static void registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			ParserContext parserContext, Element sourceElement) {
-
+		//wuyc 注册或升级AutoProxyCreator
 		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+		//wuyc 对于proxy-target-class以及expose-proxy属性的处理
+		/*
+		 * proxy-target-class的作用：
+		 * 指定用CGLIB进行代理，而不是用默认的JDK动态代理时，可以指定<aop:aspectj-autoproxy proxy-target-class="true"/>
+		 * expose-proxy的作用：
+		 * 对象内部自我调用也可实施切面增强
+		 */
 		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
+		//wuyc 注册组件并通知，便于监听器做进一步处理
 		registerComponentIfNecessary(beanDefinition, parserContext);
 	}
 
@@ -103,10 +111,13 @@ public abstract class AopNamespaceUtils {
 
 	private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, Element sourceElement) {
 		if (sourceElement != null) {
+			//wuyc proxy-target-class
 			boolean proxyTargetClass = Boolean.valueOf(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));
 			if (proxyTargetClass) {
+				//wuyc 设置属性
 				AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
 			}
+			//wuyc expose-proxy
 			boolean exposeProxy = Boolean.valueOf(sourceElement.getAttribute(EXPOSE_PROXY_ATTRIBUTE));
 			if (exposeProxy) {
 				AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);

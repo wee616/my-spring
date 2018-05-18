@@ -135,7 +135,7 @@ class InstantiationModelAwarePointcutAdvisorImpl
 		return (this.instantiatedAdvice != null);
 	}
 
-
+	//wuyc 根据注解中的信息初始化对应的增强器
 	private Advice instantiateAdvice(AspectJExpressionPointcut pcut) {
 		return this.atAspectJAdvisorFactory.getAdvice(
 				this.method, pcut, this.aspectInstanceFactory, this.declarationOrder, this.aspectName);
